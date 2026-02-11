@@ -11,13 +11,16 @@ export const login = (data: { email: string; password: string }) => {
         type: "LOGIN_SUCCESS",
         payload: res.data,
       });
-      
-      // Optional: store token
-      localStorage.setItem("accessToken", res?.data?.idToken);
-      localStorage.setItem("refreshToken",res?.data?.refreshToken)
 
+      // Store tokens for subsequent requests
+      if (typeof window !== "undefined") {
+        localStorage.setItem("accessToken", res?.data?.idToken || res?.data?.token || "");
+        if (res?.data?.refreshToken) {
+          localStorage.setItem("refreshToken", res.data.refreshToken);
+        }
+      }
     } catch (error: any) {
-        console.log("errorerrorerror",error.response)
+      console.log("login error", error?.response);
       dispatch({
         type: "LOGIN_FAILURE",
         payload:
@@ -25,5 +28,16 @@ export const login = (data: { email: string; password: string }) => {
           "Login failed. Please try again.",
       });
     }
+  };
+};
+
+export const logout = () => {
+  return (dispatch: any) => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
+
+    dispatch({ type: "LOGOUT" });
   };
 };

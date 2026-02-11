@@ -1,15 +1,12 @@
 import axios from "axios";
 import { store } from "@/redux/store";
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000",
-  headers: {
-    "Content-Type": "application/json",
-  },
+const authApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api",
 });
 
-// Optional: attach token here too for non-/api routes if needed
-api.interceptors.request.use(
+// Attach token for authenticated requests
+authApi.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
       const token = localStorage.getItem("accessToken");
@@ -23,7 +20,7 @@ api.interceptors.request.use(
 );
 
 // Auto logout on token expiry / unauthorized
-api.interceptors.response.use(
+authApi.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
@@ -49,4 +46,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default authApi;

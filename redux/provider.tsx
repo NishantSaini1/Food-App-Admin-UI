@@ -5,9 +5,6 @@ import { store } from "./store";
 
 export default function ReduxProvider({
   children,
-
-
-  
 }: {
   children: React.ReactNode;
 }) {
